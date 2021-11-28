@@ -1,10 +1,14 @@
 package DynamicProgramming;
 
 import java.util.Arrays;
+import java.util.HashMap;
 
 public class ClimbingStairs {
 
-    public static int getNumberOfWaysExponentialRuntime(int n, int m){
+    //don't necessarily need a hashmap, could use an array for top down, but get used to using hashmaps for dp
+    private HashMap<Integer, Integer> hm = new HashMap<>();
+
+    public int getNumberOfWaysExponentialRuntime(int n, int m){
         //create an array that can hold the number of ways to each step
         int[] res = new int[n];
 
@@ -25,28 +29,33 @@ public class ClimbingStairs {
 
     }
 
-    public static int getNumberOfWaysSlidingWindow(int n, int m){
+    public int getNumberOfWaysSlidingWindow(int n, int m){
         int[] res = new int[n+1];
         //keep a window of sum of last m possible stairs from which we can climb to the ith stair
         res[0] = 1;
         int temp = 0;
-        for(int i = 1;i<=n;i++){
-            int s = i - m - 1;
-            int e = i - 1;
+        for(int i = 1;i<=n;i++){//assume that i=5, m=2
+            int s = i - m - 1;//2
+            int e = i - 1;//4
             if(s>=0){
-               temp -= res[s];
+               temp -= res[s];//temp = 5-2 = 3
             }
-            temp += res[e];
-            res[i] = temp;
+            temp += res[e];//temp = 3 + 5 = 8
+            res[i] = temp;//res = [1,1,2,3,5,8...
         }
         return res[n];
     }
 
-    public static void main(String[] args){
-        int m = 2;
-        int n = 8;
-        int solution = getNumberOfWaysExponentialRuntime(n+1,m);
-        System.out.println("exponential: " + solution);
-        System.out.println("O(n) time: " + getNumberOfWaysSlidingWindow(n,m));
+    public int topDownApproach(int n){
+        //very straight forward to implement
+        if(n <= 2) return n;
+        if(!hm.containsKey(n)){
+            hm.put(n, topDownApproach(n-1) + topDownApproach(n-2));
+        }
+
+        return hm.get(n);
+
     }
+
+
 }
